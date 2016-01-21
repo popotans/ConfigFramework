@@ -19,7 +19,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
         private static ConfigHeartbeatProtect _configheartbeatprotect;  //单例
         private static object _instancelock = new object();//单例实例锁
         private static object _contextupdatelock = new object();//上下文更新锁 
-        private RedisNetCommandListener redislistener = null;
+        //private RedisNetCommandListener redislistener = null;
         public ConfigHeartbeatProtect()
         {
             cancelSource = new CancellationTokenSource();

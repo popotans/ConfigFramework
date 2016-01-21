@@ -4,41 +4,42 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZF.Db;
 
-namespace ConfigFramework.ConfigManger.Model
+namespace ConfigFramework.Model
 {
-    public class project
+    public class Project
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string ProjectName { get; set; }
-        public string ConnectionString { get; set; }
+        public string CategoryIds { get; set; }
+        public string Remark { get; set; }
         public DateTime CreateTime { get; set; }
-        public DateTime LastUpdateTime { get; set; }
-        public static project CreateModel(DataRow dr)
+
+        public static Project CreateModel(DataRow dr)
         {
-            project pj = new project();
+            Project project = new Project();
             if (dr.Table.Columns.Contains("Id"))
             {
-                pj.Id = int.Parse(dr["Id"].ToString());
+                project.Id = LibConvert.ObjToInt64(dr["Id"]);
             }
             if (dr.Table.Columns.Contains("ProjectName"))
             {
-                pj.ProjectName = dr["ProjectName"].ToString();
+                project.ProjectName = LibConvert.ObjToStr(dr["ProjectName"]);
             }
-            if (dr.Table.Columns.Contains("ConnectionString"))
+            if (dr.Table.Columns.Contains("CategoryIds"))
             {
-                pj.ConnectionString = dr["ConnectionString"].ToString();
+                project.CategoryIds = LibConvert.ObjToStr(dr["CategoryIds"]);
+            }
+            if (dr.Table.Columns.Contains("Remark"))
+            {
+                project.Remark = LibConvert.ObjToStr(dr["Remark"]);
             }
             if (dr.Table.Columns.Contains("CreateTime"))
             {
-                pj.CreateTime = DateTime.Parse(dr["CreateTime"].ToString());
+                project.CreateTime = LibConvert.ObjToDateTime(dr["CreateTime"]);
             }
-            if (dr.Table.Columns.Contains("LastUpdateTime"))
-            {
-                pj.LastUpdateTime = DateTime.Parse(dr["LastUpdateTime"].ToString());
-            }
-            
-            return pj;
+            return project;
         }
     }
 }

@@ -41,12 +41,19 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZF">
+      <HintPath>..\..\ZF\ZF\ZF\bin\Debug\ZF.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="ConfigManger\ConfigMangerHelper.cs" />
+    <Compile Include="ConfigManger\Dal\CategoryDal.cs" />
+    <Compile Include="ConfigManger\Dal\ConfigDal.cs" />
     <Compile Include="ConfigManger\Dal\ProjectDal.cs" />
-    <Compile Include="ConfigManger\Model\project.cs" />
+    <Compile Include="ConfigManger\Model\Category.cs" />
+    <Compile Include="ConfigManger\Model\Config.cs" />
+    <Compile Include="ConfigManger\Model\Project.cs" />
     <Compile Include="ConfigManger\systemruntime\ConfigContext.cs" />
     <Compile Include="ConfigManger\systemruntime\ConfigHeartbeatProtect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
