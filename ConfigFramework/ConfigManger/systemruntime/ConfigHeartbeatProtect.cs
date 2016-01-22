@@ -3,6 +3,7 @@ using ConfigFramework.ConfigManger.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -79,7 +80,8 @@ namespace ConfigFramework.ConfigManger.systemruntime
         {
             lock (_lockconfig)
             {
-                string jasonpath = AppDomain.CurrentDomain.BaseDirectory + "\\json.text";
+
+                string jasonpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "json", "json.text");
                 try
                 {
                     bool isupdatelocal = false;
