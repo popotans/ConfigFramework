@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZF.Db;
 
-namespace ConfigFramework.Model
+namespace ConfigFramework.ConfigManger.Model
 {
     public class Config
     {

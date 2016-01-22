@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConfigFramework.ConfigManger.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,15 +20,15 @@ namespace ConfigFramework.ConfigManger.systemruntime
         /// <summary>
         /// 项目信息
         /// </summary>
-        //public tb_project_model ProjectModel { get; set; }
+        public Project ProjectModel { get; set; }
         /// <summary>
         /// 分类信息
         /// </summary>
-        //public List<tb_category_model> CategoryModels { get; set; }
+        public List<Category> CategoryModels { get; set; }
         /// <summary>
         /// 配置信息字典
         /// </summary>
-        //public ConfigInfoOfKeyDic ConfigInfoOfKeyDic { get; set; }
+        public ConfigInfoOfKeyDic ConfigInfoOfKeyDic { get; set; }
         /// <summary>
         /// 配置最后更新时间（以配置数据库服务器时间为标准时间）
         /// </summary>

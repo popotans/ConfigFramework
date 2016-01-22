@@ -1,5 +1,4 @@
-﻿using ConfigFramework.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZF.Db.SqlHelper;
 using System.Data.SqlClient;
+using ConfigFramework.ConfigManger.Model;
 
 namespace ConfigFramework.ConfigManger.Dal
 {
