@@ -16,6 +16,7 @@ namespace ConfigFramework.ConfigManger.Model
         public string ConfigValue { get; set; }
         public string Remark { get; set; }
         public DateTime CreateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
 
         public static Config CreateModel(DataRow dr)
         {
@@ -43,6 +44,10 @@ namespace ConfigFramework.ConfigManger.Model
             if (dr.Table.Columns.Contains("CreateTime"))
             {
                 config.CreateTime = LibConvert.ObjToDateTime(dr["CreateTime"]);
+            }
+            if (dr.Table.Columns.Contains("UpdateTime"))
+            {
+                config.UpdateTime = LibConvert.ObjToDateTime(dr["UpdateTime"]);
             }
             return config;
         }

@@ -5,3 +5,4 @@ E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ZF.dll
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ZF.pdb
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\obj\Debug\ConfigFramework.dll
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\obj\Debug\ConfigFramework.pdb
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\obj\Debug\ConfigFramework.csprojResolveAssemblyReference.cache

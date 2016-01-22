@@ -53,6 +53,7 @@
     <Compile Include="ConfigManger\Dal\ProjectDal.cs" />
     <Compile Include="ConfigManger\Model\Category.cs" />
     <Compile Include="ConfigManger\Model\Config.cs" />
+    <Compile Include="ConfigManger\Model\ConfigModel.cs" />
     <Compile Include="ConfigManger\Model\Project.cs" />
     <Compile Include="ConfigManger\systemruntime\ConfigContext.cs" />
     <Compile Include="ConfigManger\systemruntime\ConfigHeartbeatProtect.cs" />

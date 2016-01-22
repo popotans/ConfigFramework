@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ZF.Db.SqlHelper;
 using System.Data.SqlClient;
 using ConfigFramework.ConfigManger.Model;
+using ZF.Db;
 
 namespace ConfigFramework.ConfigManger.Dal
 {
@@ -60,6 +61,56 @@ namespace ConfigFramework.ConfigManger.Dal
                 config = Config.CreateModel(dt.Rows[0]);
             }
             return config;
+        }
+
+        public List<Config> GetListByCategoryIds(long[] cids, DateTime updatetime)
+        {
+            List<Config> list = new List<Config>();
+            string sqlwhere = "";
+            SqlParameter[] paramters = new SqlParameter[cids.Length + 1];
+
+            paramters[0] = new SqlParameter("@updatetime", updatetime);
+            if (!string.IsNullOrEmpty(sqlwhere))
+            {
+                sqlwhere += "AND UpdateTime > @updatetime";
+            }
+            else
+            {
+                sqlwhere += " UpdateTime > @updatetime";
+            }
+
+            for (int i = 0; i < cids.Length; i++)
+            {
+                paramters[i+1] = new SqlParameter("@cid" + i, cids[i]);
+                if (string.IsNullOrEmpty(sqlwhere))
+                {
+                    sqlwhere += "CategoryId=@cid" + i + "";
+                }
+                else
+                {
+                    sqlwhere += " OR CategoryId=@cid" + i + "";
+                }
+            }
+
+            
+
+            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
+            string sql="SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config";
+            if (!string.IsNullOrEmpty(sqlwhere))
+            {
+                sql += "WHERE " + sqlwhere;    
+            }
+            DataTable dt = SqlServerHelper.Get(conn, sql, paramters);
+            if (dt.Rows.Count > 0)
+            {
+                for (int m = 0; m < dt.Rows.Count; m++)
+                {
+                    Config config = new Config();
+                    config = Config.CreateModel(dt.Rows[m]);
+                    list.Add(config);
+                }
+            }
+            return list;
         }
     }
 }
