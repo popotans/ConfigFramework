@@ -6,3 +6,7 @@ E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ZF.pdb
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\obj\Debug\ConfigFramework.dll
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\obj\Debug\ConfigFramework.pdb
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\obj\Debug\ConfigFramework.csprojResolveAssemblyReference.cache
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Common.dll
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Interfaces.dll
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Redis.dll
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Text.dll

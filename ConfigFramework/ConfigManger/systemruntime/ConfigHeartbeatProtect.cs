@@ -32,6 +32,12 @@ namespace ConfigFramework.ConfigManger.systemruntime
                 {
                     HeartRun();
                 }, cancelSource.Token);
+
+                RedisCommandListener redislistener = new RedisCommandListener(AppDomainContext.Context.ConfigParams.RedisServer);
+                redislistener.Register((channle, msg) => 
+                {
+                    RedisCommandListen(channle, msg);
+                }, cancelSource, RedisCommandConfig.Redis_channle);
             }
             catch (Exception ex)
             {
@@ -53,6 +59,14 @@ namespace ConfigFramework.ConfigManger.systemruntime
                 {
 
                 }
+            }
+        }
+
+        public void RedisCommandListen(string channle, string msg)
+        {
+            if (!string.IsNullOrEmpty(msg))
+            {
+                LoadConfig(true);
             }
         }
 
@@ -89,7 +103,34 @@ namespace ConfigFramework.ConfigManger.systemruntime
                     
                     if (isload)
                     {
+                        SystemConfigDal scdal = new SystemConfigDal();
+                        SystemConfig sc = scdal.GetRedisServer();
+                        if (sc != null)
+                        {
+                            AppDomainContext.Context.ConfigParams.RedisServer = sc.ConfigValue;
+                        }
 
+                        //更新项目信息
+                        ProjectDal prodal = new ProjectDal();
+                        AppDomainContext.Context.ProjectModel = prodal.GetByName(AppDomainContext.Context.ConfigParams.ProjectName);
+
+                        //更新分类信息
+                        CategoryDal catedal=new CategoryDal();
+                        AppDomainContext.Context.CategoryModels = catedal.GetListByIds(AppDomainContext.Context.ProjectModel.CategoryIds);
+
+                        //更新配置信息
+                        ConfigDal configdal = new ConfigDal();
+                        List<Config> configs = configdal.GetListByCategoryIds(AppDomainContext.Context.CategoryModels.Select(p => p.Id).ToArray(), updatetime);
+                        List<ConfigModel> configmodels = ToConfigModel(configs);
+                        foreach (var item in configmodels)
+                        {
+                            AppDomainContext.Context.ConfigInfoOfKeyDic.SetConfig(item);
+                        }
+                        if (configs.Count > 0)
+                        {
+                            isupdatelocal = true;
+                        }
+                        
                     }
                     else
                     {

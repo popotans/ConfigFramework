@@ -52,5 +52,47 @@ namespace ConfigFramework.ConfigManger.Dal
             }
             return category;
         }
+
+        /// <summary>
+        /// 获得cids的分类列表
+        /// </summary>
+        /// <param name="cids"></param>
+        /// <returns></returns>
+        public List<Category> GetListByIds(string cids)
+        {
+            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
+            List<Category> list = new List<Category>();
+            string sqlwhere = "";
+            string[] idsstr = cids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            SqlParameter[] paramters = new SqlParameter[idsstr.Length];
+            for (int i = 0; i < idsstr.Length; i++)
+            {
+                if (string.IsNullOrEmpty(sqlwhere))
+                {
+                    sqlwhere += "Id=@cid" + i;
+                }
+                else
+                {
+                    sqlwhere += "OR Id=@cid" + i;
+                }
+                paramters[i] = new SqlParameter("@cid" + i, idsstr[i]);
+            }
+            string sql = "SELECT Id,CategoryName,Remark,CreateTime FROM Category ";
+            if (!string.IsNullOrEmpty(sqlwhere))
+            {
+                sql += "WHERE " + sqlwhere;
+            }
+            DataTable dt = SqlServerHelper.Get(conn, sql, paramters);
+            if (dt.Rows.Count > 0)
+            {
+                for (int m = 0; m < dt.Rows.Count; m++)
+                {
+                    Category cate = new Category();
+                    cate = Category.CreateModel(dt.Rows[m]);
+                    list.Add(cate);
+                }
+            }
+            return list;
+        }
     }
 }
