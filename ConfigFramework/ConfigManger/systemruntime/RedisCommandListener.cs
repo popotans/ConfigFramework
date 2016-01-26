@@ -10,7 +10,7 @@ using ServiceStack.Redis;
 namespace ConfigFramework.ConfigManger.systemruntime
 {
     //redis网络及时监听器
-    public class RedisCommandListener
+    public class RedisCommandListener : IDisposable
     {
         private List<string> RedisServerIps;
         private CancellationTokenSource cancellation;
@@ -75,6 +75,14 @@ namespace ConfigFramework.ConfigManger.systemruntime
 
                     subscription.SubscribeToChannels(channle); //blocks thread
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (cancellation != null)
+            {
+                cancellation.Cancel();
             }
         }
     }

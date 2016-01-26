@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ZF.IOHelper;
+using ZF.Log;
 
 namespace ConfigFramework.ConfigManger.systemruntime
 {
@@ -22,6 +23,8 @@ namespace ConfigFramework.ConfigManger.systemruntime
         private static object _lockheart = new object();  //单例锁
         private static object _lockconfig = new object(); //更新锁
 
+        private static RedisCommandListener redislistener = null;
+
         public ConfigHeartbeatProtect()
         {
             try
@@ -33,7 +36,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                     HeartRun();
                 }, cancelSource.Token);
 
-                RedisCommandListener redislistener = new RedisCommandListener(AppDomainContext.Context.ConfigParams.RedisServer);
+                redislistener = new RedisCommandListener(AppDomainContext.Context.ConfigParams.RedisServer);
                 redislistener.Register((channle, msg) => 
                 {
                     RedisCommandListen(channle, msg);
@@ -41,7 +44,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
             }
             catch (Exception ex)
             {
-                throw;
+                LogHelper.WriteError(ex);
             }
 
         }
@@ -54,10 +57,11 @@ namespace ConfigFramework.ConfigManger.systemruntime
                 try
                 {
                     LoadConfig(false);
+                    LogHelper.WriteInfo("心跳配置一次");
                 }
                 catch (Exception ex)
                 {
-
+                    LogHelper.WriteError(ex);
                 }
             }
         }
@@ -159,6 +163,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                 {
                     string json2 = IOHelper.Read(jasonpath);
                     JsonConvert.DeserializeObject<ConfigContext>(json2);   //从磁盘获得上次正确的配置
+                    LogHelper.WriteInfo("从磁盘读取配置");
                 }
             }
         }
@@ -182,8 +187,8 @@ namespace ConfigFramework.ConfigManger.systemruntime
         {
             if (cancelSource != null)
                 cancelSource.Cancel();
-            //if (redislistener != null)
-            //    redislistener.Dispose();
+            if (redislistener != null)
+                redislistener.Dispose();
         }
     }
 }
