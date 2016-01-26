@@ -99,7 +99,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
         {
             lock (_lockconfig)
             {
-                string jasonpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "json", "json.text");
+                string jasonpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "json", "json.txt");
                 try
                 {
                     bool isupdatelocal = false;
@@ -133,8 +133,10 @@ namespace ConfigFramework.ConfigManger.systemruntime
                             dic.SetConfig(item);
                         }
                         AppDomainContext.Context.ConfigInfoOfKeyDic = dic;
+
                         if (configs.Count > 0)
                         {
+                            configdal.SetUpdatetime(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString, cids, updatetime);
                             isupdatelocal = true;
                         }
                         
@@ -152,6 +154,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                         }
                         if (configs.Count > 0)  //本次有配置更新
                         {
+                            configdal.SetUpdatetime(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString, cids, updatetime);
                             isupdatelocal = true;
                         }
                     }

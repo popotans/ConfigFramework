@@ -64,7 +64,7 @@ namespace ConfigFramework.ConfigManger.Dal
         {
             List<Config> list = new List<Config>();
 
-            string sql = "SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config WHERE UpdateTime < @updatetime";
+            string sql = "SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime,UpdateTime FROM Config WHERE UpdateTime < @updatetime";
 
             SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@updatetime", updatetime) };
             
@@ -79,6 +79,31 @@ namespace ConfigFramework.ConfigManger.Dal
                 }
             }
             return list.Where(c => cids.Contains(c.CategoryId)).ToList();
+        }
+
+        public void SetUpdatetime(string conn, long[] cids, DateTime updatetime)
+        {
+            string sqlwhere = "";
+            SqlParameter[] paramters = new SqlParameter[cids.Length + 1];
+            for (int i = 0; i < cids.Length; i++)
+            {
+                if (string.IsNullOrEmpty(sqlwhere))
+                {
+                    sqlwhere += "Id=@id" + i + "";
+                }
+                else
+                {
+                    sqlwhere += "OR Id=@id" + i + "";
+                }
+                paramters[i] = new SqlParameter("@id" + i + "", cids[i]);
+            }
+            paramters[cids.Length] = new SqlParameter("@update", updatetime);
+            string sql = "UPDATE Config SET UpdateTime=@update ";
+            if (!string.IsNullOrEmpty(sqlwhere))
+            {
+                sql += "WHERE " + sqlwhere;
+            }
+            SqlServerHelper.ExecuteNonQuery(conn, sql, paramters);
         }
     }
 }

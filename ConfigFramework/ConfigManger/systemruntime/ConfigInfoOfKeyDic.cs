@@ -19,7 +19,10 @@ namespace ConfigFramework.ConfigManger.systemruntime
             {
                 this[configmodel.config.ConfigKey] = configmodel;
             }
-            this.Add(configmodel.config.ConfigKey, configmodel);
+            else
+            {
+                this.Add(configmodel.config.ConfigKey, configmodel);
+            }
         }
 
         public ConfigModel GetConfig(string key)
