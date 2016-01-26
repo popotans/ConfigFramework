@@ -17,9 +17,8 @@ namespace ConfigFramework.ConfigManger.Dal
         /// 读取列表
         /// </summary>
         /// <returns></returns>
-        public List<Config> GetList()
+        public List<Config> GetList(string conn)
         {
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             List<Config> list = new List<Config>();
             string sql = "SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config";
             DataTable dt = SqlServerHelper.Get(conn, sql);
@@ -35,10 +34,9 @@ namespace ConfigFramework.ConfigManger.Dal
             return list;
         }
 
-        public Config GetById(long id)
+        public Config GetById(string conn, long id)
         {
             Config config = new Config();
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             string sql = "SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config WHERE Id=@id";
             SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@id", id) };
             DataTable dt = SqlServerHelper.Get(conn, sql, paramters);
@@ -49,10 +47,9 @@ namespace ConfigFramework.ConfigManger.Dal
             return config;
         }
 
-        public Config GetByCategoryId(long cid)
+        public Config GetByCategoryId(string conn,long cid)
         {
             Config config = new Config();
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             string sql = "SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config WHERE CategoryId=@cid";
             SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@cid", cid) };
             DataTable dt = SqlServerHelper.Get(conn, sql, paramters);
@@ -63,43 +60,14 @@ namespace ConfigFramework.ConfigManger.Dal
             return config;
         }
 
-        public List<Config> GetListByCategoryIds(long[] cids, DateTime updatetime)
+        public List<Config> GetListByCategoryIds(string conn, long[] cids, DateTime updatetime)
         {
             List<Config> list = new List<Config>();
-            string sqlwhere = "";
-            SqlParameter[] paramters = new SqlParameter[cids.Length + 1];
 
-            paramters[0] = new SqlParameter("@updatetime", updatetime);
-            if (!string.IsNullOrEmpty(sqlwhere))
-            {
-                sqlwhere += "AND UpdateTime > @updatetime";
-            }
-            else
-            {
-                sqlwhere += " UpdateTime > @updatetime";
-            }
+            string sql = "SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config WHERE UpdateTime < @updatetime";
 
-            for (int i = 0; i < cids.Length; i++)
-            {
-                paramters[i+1] = new SqlParameter("@cid" + i, cids[i]);
-                if (string.IsNullOrEmpty(sqlwhere))
-                {
-                    sqlwhere += "CategoryId=@cid" + i + "";
-                }
-                else
-                {
-                    sqlwhere += " OR CategoryId=@cid" + i + "";
-                }
-            }
-
+            SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@updatetime", updatetime) };
             
-
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
-            string sql="SELECT Id,CategoryId,ConfigKey,ConfigValue,Remark,CreateTime FROM Config";
-            if (!string.IsNullOrEmpty(sqlwhere))
-            {
-                sql += "WHERE " + sqlwhere;    
-            }
             DataTable dt = SqlServerHelper.Get(conn, sql, paramters);
             if (dt.Rows.Count > 0)
             {
@@ -110,7 +78,7 @@ namespace ConfigFramework.ConfigManger.Dal
                     list.Add(config);
                 }
             }
-            return list;
+            return list.Where(c => cids.Contains(c.CategoryId)).ToList();
         }
     }
 }

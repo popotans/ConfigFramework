@@ -57,7 +57,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                 try
                 {
                     LoadConfig(false);
-                    LogHelper.WriteInfo("心跳配置一次");
+                    LogHelper.WriteInfo("心跳循环配置一次");
                 }
                 catch (Exception ex)
                 {
@@ -71,6 +71,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
             if (!string.IsNullOrEmpty(msg))
             {
                 LoadConfig(true);
+                LogHelper.WriteInfo("RedisCommandListen执行一次，msg:" + msg);
             }
         }
 
@@ -98,7 +99,6 @@ namespace ConfigFramework.ConfigManger.systemruntime
         {
             lock (_lockconfig)
             {
-
                 string jasonpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "json", "json.text");
                 try
                 {
@@ -108,7 +108,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                     if (isload)
                     {
                         SystemConfigDal scdal = new SystemConfigDal();
-                        SystemConfig sc = scdal.GetRedisServer();
+                        SystemConfig sc = scdal.GetRedisServer(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString);
                         if (sc != null)
                         {
                             AppDomainContext.Context.ConfigParams.RedisServer = sc.ConfigValue;
@@ -116,20 +116,23 @@ namespace ConfigFramework.ConfigManger.systemruntime
 
                         //更新项目信息
                         ProjectDal prodal = new ProjectDal();
-                        AppDomainContext.Context.ProjectModel = prodal.GetByName(AppDomainContext.Context.ConfigParams.ProjectName);
+                        AppDomainContext.Context.ProjectModel = prodal.GetByName(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString, AppDomainContext.Context.ConfigParams.ProjectName);
 
                         //更新分类信息
                         CategoryDal catedal=new CategoryDal();
-                        AppDomainContext.Context.CategoryModels = catedal.GetListByIds(AppDomainContext.Context.ProjectModel.CategoryIds);
-
+                        AppDomainContext.Context.CategoryModels = catedal.GetListByIds(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString, AppDomainContext.Context.ProjectModel.CategoryIds);
+                        long[] cids = AppDomainContext.Context.CategoryModels.Select(p => p.Id).ToArray();
                         //更新配置信息
                         ConfigDal configdal = new ConfigDal();
-                        List<Config> configs = configdal.GetListByCategoryIds(AppDomainContext.Context.CategoryModels.Select(p => p.Id).ToArray(), updatetime);
+                        List<Config> configs = configdal.GetListByCategoryIds(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString, cids, updatetime);
                         List<ConfigModel> configmodels = ToConfigModel(configs);
+
+                        ConfigInfoOfKeyDic dic = new ConfigInfoOfKeyDic();
                         foreach (var item in configmodels)
                         {
-                            AppDomainContext.Context.ConfigInfoOfKeyDic.SetConfig(item);
+                            dic.SetConfig(item);
                         }
+                        AppDomainContext.Context.ConfigInfoOfKeyDic = dic;
                         if (configs.Count > 0)
                         {
                             isupdatelocal = true;
@@ -141,7 +144,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                         ConfigDal configdal = new ConfigDal();
                         long[] cids = AppDomainContext.Context.CategoryModels.Select(p => p.Id).ToArray();
 
-                        List<Config> configs = configdal.GetListByCategoryIds(cids, updatetime);
+                        List<Config> configs = configdal.GetListByCategoryIds(AppDomainContext.Context.ConfigParams.ConfigManagerConnectString, cids, updatetime);
                         List<ConfigModel> configmodels = ToConfigModel(configs);
                         foreach (var item in configmodels)
                         {
@@ -157,6 +160,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
                     {
                         string json1 = JsonConvert.SerializeObject(AppDomainContext.Context);
                         IOHelper.Write(jasonpath, json1);  //写入磁盘
+                        LogHelper.WriteInfo("写入磁盘成功");
                     }
                 }
                 catch (Exception)

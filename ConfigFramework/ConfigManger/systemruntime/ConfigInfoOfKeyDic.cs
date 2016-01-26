@@ -17,7 +17,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
         {
             if (this.ContainsKey(configmodel.config.ConfigKey))
             {
-                this.Remove(configmodel.config.ConfigKey);
+                this[configmodel.config.ConfigKey] = configmodel;
             }
             this.Add(configmodel.config.ConfigKey, configmodel);
         }

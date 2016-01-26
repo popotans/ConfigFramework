@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using ZF.Db.SqlHelper;
+using ZF.Db;
 
 namespace ConfigFramework.ConfigManger.Dal
 {
@@ -16,9 +17,8 @@ namespace ConfigFramework.ConfigManger.Dal
         /// 读取列表
         /// </summary>
         /// <returns></returns>
-        public List<Category> GetList()
+        public List<Category> GetList(string conn)
         {
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             List<Category> list = new List<Category>();
             string sql = "SELECT Id,CategoryName,Remark,CreateTime FROM Category";
             DataTable dt = SqlServerHelper.Get(conn, sql);
@@ -39,9 +39,8 @@ namespace ConfigFramework.ConfigManger.Dal
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Category GetById(long id)
+        public Category GetById(string conn,long id)
         {
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             Category category = new Category();
             string sql = "SELECT Id,CategoryName,Remark,CreateTime FROM Category WHERE Id=@cid";
             SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@cid", id) };
@@ -58,30 +57,21 @@ namespace ConfigFramework.ConfigManger.Dal
         /// </summary>
         /// <param name="cids"></param>
         /// <returns></returns>
-        public List<Category> GetListByIds(string cids)
+        public List<Category> GetListByIds(string conn,string cids)
         {
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             List<Category> list = new List<Category>();
-            string sqlwhere = "";
-            string[] idsstr = cids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            SqlParameter[] paramters = new SqlParameter[idsstr.Length];
-            for (int i = 0; i < idsstr.Length; i++)
+
+            string[] cidstr = cids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            long[] ids = new long[cidstr.Length];
+
+            for (int i = 0; i < cidstr.Length; i++)
             {
-                if (string.IsNullOrEmpty(sqlwhere))
-                {
-                    sqlwhere += "Id=@cid" + i;
-                }
-                else
-                {
-                    sqlwhere += "OR Id=@cid" + i;
-                }
-                paramters[i] = new SqlParameter("@cid" + i, idsstr[i]);
+                ids[i] = LibConvert.StrToInt64(cidstr[i]);
             }
-            string sql = "SELECT Id,CategoryName,Remark,CreateTime FROM Category ";
-            if (!string.IsNullOrEmpty(sqlwhere))
-            {
-                sql += "WHERE " + sqlwhere;
-            }
+
+            string sql = "SELECT Id,CategoryName,Remark,CreateTime FROM Category";
+            SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@cdis", cids) };
+            
             DataTable dt = SqlServerHelper.Get(conn, sql, paramters);
             if (dt.Rows.Count > 0)
             {
@@ -92,7 +82,7 @@ namespace ConfigFramework.ConfigManger.Dal
                     list.Add(cate);
                 }
             }
-            return list;
+            return list.Where(c => ids.Contains(c.Id)).ToList();
         }
     }
 }

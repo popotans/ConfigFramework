@@ -12,10 +12,9 @@ namespace ConfigFramework.ConfigManger.Dal
 {
     public class SystemConfigDal
     {
-        public SystemConfig GetRedisServer()
+        public SystemConfig GetRedisServer(string conn)
         {
             SystemConfig config = new SystemConfig();
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             string sql = "SELECT Id,ConfigKey,ConfigValue,Remark FROM SystemConfig WHERE ConfigKey='RedisServer'";
             DataTable dt = SqlServerHelper.Get(conn, sql);
             if (dt.Rows.Count > 0)

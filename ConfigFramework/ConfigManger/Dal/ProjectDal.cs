@@ -16,9 +16,8 @@ namespace ConfigFramework.ConfigManger.Dal
         /// 读取列表
         /// </summary>
         /// <returns></returns>
-        public List<Project> GetList()
+        public List<Project> GetList(string conn)
         {
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             List<Project> list = new List<Project>();
             string sql = "SELECT Id,ProjectName,CategoryIds,Remark,CreateTime FROM Project";
             DataTable dt = SqlServerHelper.Get(conn, sql);
@@ -39,9 +38,8 @@ namespace ConfigFramework.ConfigManger.Dal
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Project GetByName(string name)
+        public Project GetByName(string conn,string name)
         {
-            string conn = ConfigMangerHelper.Get<string>("ConfigManager");
             Project project = new Project();
             string sql = "SELECT Id,ProjectName,CategoryIds,Remark,CreateTime FROM Project WHERE ProjectName=@pname";
             SqlParameter[] paramters = new SqlParameter[] { new SqlParameter("@pname", name) };

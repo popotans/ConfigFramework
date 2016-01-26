@@ -1,12 +1,15 @@
-﻿using ConfigFramework.ConfigManger.systemruntime;
+﻿using ConfigFramework.Common;
+using ConfigFramework.ConfigManger.Dal;
+using ConfigFramework.ConfigManger.systemruntime;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZF.Log;
 
-namespace ConfigFramework.ConfigManger
+namespace ConfigFramework
 {
     public class ConfigMangerHelper
     {
@@ -57,26 +60,30 @@ namespace ConfigFramework.ConfigManger
                 {
                     if (_sigleconfig == null)
                     {
-                        if (string.IsNullOrEmpty(Get<string>("ProjectName")))
+                        if (string.IsNullOrEmpty(CommonConfig.ProjectName) || CommonConfig.ProjectName=="未命名项目")
                         {
+                            LogHelper.WriteError("请选择请在web.config或AppSettings.config中配置ProjectName");
                             throw new Exception("请选择请在web.config或AppSettings.config中配置ProjectName");
                         }
-                        if (string.IsNullOrEmpty(Get<string>("ConfigRedisConnectString")))   //项目redis连接
+                        if (string.IsNullOrEmpty(CommonConfig.ConfigManagerConnectString)) 
                         {
+                            LogHelper.WriteError("请在web.config或AppSettings.config中配置ConfigRedisConnectString");
                             throw new Exception("请在web.config或AppSettings.config中配置ConfigRedisConnectString");
                         }
-
+                        SystemConfigDal redisdal = new SystemConfigDal();
                         string redisserver = "";
-                        redisserver = Get<string>("ConfigRedisConnectString");
+                        redisserver = redisdal.GetRedisServer(CommonConfig.ConfigManagerConnectString).ConfigValue;
                         AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
                         AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
                         ConfigContext context = new ConfigContext(); 
                         context.ConfigParams = new ConfigParams() 
-                        { 
-                            ProjectName = "ProjectName", ConfigManagerConnectString = Get<string>("ProjectName"), RedisServer = redisserver 
+                        {
+                            ProjectName = CommonConfig.ProjectName,
+                            ConfigManagerConnectString = CommonConfig.ConfigManagerConnectString,
+                            RedisServer = redisserver 
                         };
                         AppDomainContext.Context = context;
-                        ConfigHeartbeatProtect.Instance().LoadConfig(false);
+                        ConfigHeartbeatProtect.Instance().LoadConfig(true);
                         _sigleconfig = new ConfigMangerHelper();
                     }
                 }
@@ -103,10 +110,10 @@ namespace ConfigFramework.ConfigManger
                 {
                     if (AppDomainContext.Context == null)
                         throw new Exception("当前项目未在配置中心获取配置列表");
-                    var config = AppDomainContext.Context;
+                    var config = AppDomainContext.Context.ConfigInfoOfKeyDic.GetConfig(configkey);
                     if (config == null)
                         throw new Exception(string.Format("未找到当前配置项,请联系管理员在配置中心中添加.key:{0}", configkey));
-                    value = config.ConfigParams.ConfigManagerConnectString;
+                    value = config.Value();
                 }
             }
             return (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
