@@ -10,3 +10,6 @@ E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Common.
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Interfaces.dll
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Redis.dll
 E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\ServiceStack.Text.dll
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\log4net.dll
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\RabbitMQ.Client.dll
+E:\zhengwc\Github\ConfigFramework\ConfigFramework\bin\Debug\RabbitMQ.Client.xml
