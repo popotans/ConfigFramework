@@ -25,7 +25,7 @@ namespace ConfigFramework.ConfigManger.systemruntime
 
         private static RedisCommandListener redislistener = null;
 
-        public ConfigHeartbeatProtect()
+        private ConfigHeartbeatProtect()
         {
             try
             {
